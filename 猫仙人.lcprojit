@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<lcprojit show_exit_menu="1" cpu_arm="0" icon="" opt_del_engtessdata="1" crashautorestart="1" def_dbg_host="0.0.0.0" engine_type="0" cpu_x86="0" opt_remove_imgui="1" nxseport="0" appname="猫仙人" use_newhash="0" use_simplelogwnd="0" vername="0.1.51" vir_hei="1280" opt_recorandsavelog_checked="1" custom_menu_name="我的菜单" apiport="0" pkgname="com.mxrxinbanben.cn" opt_logofillfloatwnd_checked="0" show_log_menu="0" use_card="0" vir_wid="720" engine_ios_type="0" vercode="151" nxspkg="com.mxrxinbanben.cn.nxs" opt_floatwnddock="1" use_pluginservice="0" use_pluginmainui="0" use_gohunxiao="0" wdapkg="com.mxrxinbanben.cn.wda.xctrunner" opt_showscriptmainui_checked="1" show_pause_menu="1" opt_delncnn_checked="0" cardmode="1" lcprojversion="150" listen_port="0" use_confusion="0" is_standalone="0" streamport="0" show_custom_menu="0" opt_useoldnodeservice_checked="1" show_setting_menu="1" is_acc_mode="0" use_oldfloatwnd="0" opt_forceruninrootmode_checked="194" use_oldsnapmode="0" wdaname="猫仙人_Wda" projname="猫仙人" opt_disableshowfloatwnd_checked="0" plugin_path="" opt_notshowmainui_checked="1" cpu_arm64="1" cpu_x86_64="1" opt_openorclosebyvol_checked="0" opt_delonnx_checked="1" kbport="0" opt_def_dbgport="10192" opt_bootautorun_checked="1" opt_delnatural_checked="1" nxsname="猫仙人_nxs" screenorient="0" opt_openanrunscript_checked="1" opt_runinrootmode_checked="1">
+ <lua entry="猫仙人.lua"/>
+ <ui entry="猫仙人.ui"/>
+ <rc entry="猫仙人.rc"/>
+ <luaej/>
+</lcprojit>
