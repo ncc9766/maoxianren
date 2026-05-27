@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>下载地址跳转</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #667085;
+      --line: #d9dee8;
+      --primary: #1677ff;
+      --primary-dark: #0f5ed7;
+      --success: #138a55;
+      --danger: #c83232;
+      --danger-bg: #fff1f0;
+      --danger-line: #ffccc7;
+      --warning-bg: #fff7e6;
+      --warning-line: #ffd591;
+      --shadow: 0 18px 45px rgba(31, 41, 55, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(22, 119, 255, 0.14), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 52%, #eef2f7 100%);
+    }
+
+    .page {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 56px 0;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .main,
+    .guide {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(217, 222, 232, 0.8);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .main {
+      padding: 40px;
+    }
+
+    .guide {
+      padding: 28px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--success);
+      background: #eaf8f1;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tag-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    h1 {
+      margin: 22px 0 14px;
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .download-name {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fafbfc;
+      color: var(--text);
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .browser-warning {
+      display: none;
+      margin-top: 22px;
+      padding: 16px;
+      border: 1px solid var(--danger-line);
+      border-radius: 8px;
+      background: var(--danger-bg);
+      color: var(--danger);
+      font-weight: 700;
+      line-height: 1.7;
+    }
+
+    .browser-warning.show {
+      display: block;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 22px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .secondary {
+      color: var(--text);
+      background: #fff;
+      border-color: var(--line);
+    }
+
+    .status {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-line);
+      color: #7a4b00;
+      line-height: 1.7;
+    }
+
+    .count {
+      font-weight: 800;
+    }
+
+    .tutorial-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .tutorial-group {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fafbfc;
+      overflow: hidden;
+    }
+
+    .tutorial-group[open] {
+      background: #ffffff;
+      border-color: rgba(22, 119, 255, 0.32);
+    }
+
+    .tutorial-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 54px;
+      padding: 0 16px;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 700;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .tutorial-title::-webkit-details-marker {
+      display: none;
+    }
+
+    .tutorial-title:hover {
+      background: #ffffff;
+    }
+
+    .tutorial-group:nth-of-type(1) > .tutorial-title {
+      color: #0f5ed7;
+      background: #e8f3ff;
+    }
+
+    .tutorial-group:nth-of-type(2) > .tutorial-title {
+      color: #087443;
+      background: #e8f7ef;
+    }
+
+    .tutorial-group:nth-of-type(3) > .tutorial-title {
+      color: #8a4b00;
+      background: #fff4dc;
+    }
+
+    .tutorial-group:nth-of-type(4) > .tutorial-title {
+      color: #9f2f5f;
+      background: #fff0f6;
+    }
+
+    .tutorial-group:nth-of-type(5) > .tutorial-title {
+      color: #4c3aa3;
+      background: #f0edff;
+    }
+
+    .tutorial-group:nth-of-type(n + 6) > .tutorial-title {
+      color: #475467;
+      background: #eef2f7;
+    }
+
+    .tutorial-title::after {
+      content: "";
+      width: 10px;
+      height: 10px;
+      flex: 0 0 10px;
+      border-right: 2px solid var(--primary);
+      border-bottom: 2px solid var(--primary);
+      transform: rotate(45deg);
+      transition: transform 0.15s ease;
+    }
+
+    .tutorial-group[open] > .tutorial-title::after {
+      transform: rotate(225deg);
+    }
+
+    .tutorial-children {
+      display: grid;
+      gap: 8px;
+      padding: 0 12px 12px;
+    }
+
+    .tutorial-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 44px;
+      padding: 0 12px 0 14px;
+      border-radius: 8px;
+      color: var(--text);
+      background: #f4f7fb;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .tutorial-link:hover {
+      color: var(--primary);
+      background: #edf5ff;
+    }
+
+    .tutorial-link::after {
+      content: ">";
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #eef2f7;
+      color: #0f172a;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 0.92em;
+    }
+
+    .config {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .config p {
+      font-size: 15px;
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        width: min(100% - 24px, 980px);
+        padding: 24px 0;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .main,
+      .guide {
+        padding: 24px;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero" aria-label="下载跳转页面">
+      <div class="main">
+        <span class="tag"><span class="tag-dot"></span>安全跳转中</span>
+        <h1 id="pageTitle">下载地址跳转</h1>
+        <p id="pageDesc">请点击下面的按钮进入下载地址。如果无法打开，可以复制下载地址后粘贴到浏览器中访问。</p>
+
+        <div class="download-name" id="fileName">文件名称：猫仙人</div>
+        <div class="browser-warning" id="browserWarning">
+          检测到当前可能不是在系统浏览器中打开。请复制本页面链接，到 Chrome、Edge、Safari 或手机自带浏览器中打开后再下载。
+        </div>
+
+        <div class="actions">
+          <a class="button primary" id="downloadButton" href="#" rel="noopener">立即下载</a>
+          <button class="button secondary" type="button" id="copyButton">复制下载地址</button>
+        </div>
+
+        <div class="status" id="status">请点击“立即下载”进入下载地址。</div>
+      </div>
+
+      <aside class="guide">
+        <h2>使用教程</h2>
+        <nav class="tutorial-list" id="tutorialList" aria-label="使用教程链接"></nav>
+
+        <div class="config">
+          <h2>提醒</h2>
+          <p>哪写步骤不会就看对应的功能视频。</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const downloadConfig = {
+      title: "下载地址跳转",
+      description: "需要什么就下载什么不用全部下载。不懂的就看使用教程",
+      fileName: "猫仙人",
+      downloadUrl: "https://wwaqc.lanzoue.com/b00zyb82sf",
+      tutorials: [
+        {
+          name: "1 下载与安装",
+          children: [
+            { name: "下载安装", url: "https://example.com/tutorial-install-download" },
+            { name: "真机教程", url: "https://example.com/tutorial-install-steps" },
+            
+          ]
+        },
+        {
+          name: "2 角色功能",
+          children: [
+            { name: "保存配置", url: "https://example.com/tutorial-role-switch" },
+            { name: "设置每个角色对应的副本", url: "https://example.com/tutorial-role-create" },
+            { name: "快捷设置角色副本", url: "https://example.com/tutorial-role-permission" },
+           
+          ]
+        },
+        {
+          name: "3 通用功能",
+          children: [
+            { name: "激活码相关", url: "https://example.com/tutorial-common-basic" },
+            { name: "通用功能页面全功能说明", url: "https://example.com/tutorial-common-shortcuts" },
+            
+          ]
+        },
+        {
+          name: "4 杂项设置",
+          children: [
+            { name: "杂项设置", url: "https://example.com/tutorial-other-display" },
+            { name: "喵提醒使用教程", url: "https://example.com/tutorial-other-notice" }
+          ]
+        },
+        {
+          name: "5 换区功能",
+          children: [
+            { name: "大区小区的排列", url: "https://example.com/tutorial-region-switch" },
+            { name: "将泰拉上传至云端", url: "https://example.com/tutorial-region-select" },
+            { name: "换区用户的基本功能选择", url: "https://example.com/tutorial-region-select" },
+            { name: "每个区对应的配置设置", url: "https://example.com/tutorial-region-notes" },
+            
+          ]
+        }
+      ]
+    };
+
+    const pageTitle = document.getElementById("pageTitle");
+    const pageDesc = document.getElementById("pageDesc");
+    const fileName = document.getElementById("fileName");
+    const downloadButton = document.getElementById("downloadButton");
+    const copyButton = document.getElementById("copyButton");
+    const status = document.getElementById("status");
+    const browserWarning = document.getElementById("browserWarning");
+    const tutorialList = document.getElementById("tutorialList");
+
+    pageTitle.textContent = downloadConfig.title;
+    document.title = downloadConfig.title;
+    pageDesc.textContent = downloadConfig.description;
+    fileName.textContent = "文件名称：" + downloadConfig.fileName;
+    downloadButton.href = downloadConfig.downloadUrl;
+    tutorialList.innerHTML = "";
+
+    downloadConfig.tutorials.forEach((item, index) => {
+      const group = document.createElement("details");
+      group.className = "tutorial-group";
+      group.open = index === 0;
+
+      const title = document.createElement("summary");
+      title.className = "tutorial-title";
+      title.textContent = item.name;
+      group.appendChild(title);
+
+      const childrenWrap = document.createElement("div");
+      childrenWrap.className = "tutorial-children";
+      const children = item.children || [{ name: item.name, url: item.url }];
+
+      children.forEach((child) => {
+        const link = document.createElement("a");
+        link.className = "tutorial-link";
+        link.href = child.url;
+        link.textContent = child.name;
+        link.rel = "noopener";
+        childrenWrap.appendChild(link);
+      });
+
+      group.appendChild(childrenWrap);
+      tutorialList.appendChild(group);
+    });
+
+    function isLikelyInAppBrowser() {
+      const ua = navigator.userAgent.toLowerCase();
+      const inAppKeywords = [
+        "micromessenger",
+        "qq/",
+        "mqqbrowser",
+        "alipayclient",
+        "dingtalk",
+        "lark",
+        "feishu",
+        "weibo",
+        "toutiaomicroapp",
+        "aweme"
+      ];
+
+      return inAppKeywords.some((keyword) => ua.includes(keyword));
+    }
+
+    function jumpToDownload() {
+      window.location.href = downloadConfig.downloadUrl;
+    }
+
+    if (isLikelyInAppBrowser()) {
+      browserWarning.classList.add("show");
+    }
+
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(downloadConfig.downloadUrl);
+        status.textContent = "下载地址已复制，可以粘贴到浏览器中打开。";
+      } catch (error) {
+        status.textContent = "复制失败，请手动复制：" + downloadConfig.downloadUrl;
+      }
+    });
+
+    if (!downloadConfig.downloadUrl || downloadConfig.downloadUrl === "https://example.com/download") {
+      status.textContent = "哪部分功能不会就看那部分的功能。";
+    } else {
+      status.textContent = "请点击“立即下载”进入下载地址。";
+    }
+  </script>
+</body>
+</html>
